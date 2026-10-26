@@ -117,3 +117,40 @@ fun ContenidoSeriesListado(navController: NavHostController, servicio: SerieApiS
         }
     }
 }
+
+@Composable
+fun ContenidoSerieEliminar(navController: NavHostController, servicio: SerieApiService, id: Int) {
+    var showDialog by remember { mutableStateOf(true) }
+    var borrar by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Confirmar Eliminación") },
+            text = { Text("¿Está seguro de eliminar la Serie?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        borrar = true
+                    }
+                ) {
+                    Text("Aceptar")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("Cancelar")
+                    navController.navigate("series")
+                }
+            }
+        )
+    }
+    if (borrar) {
+        LaunchedEffect(Unit) {
+            servicio.deleteSerie(id.toString())
+            borrar = false
+            navController.navigate("series")
+        }
+    }
+}
